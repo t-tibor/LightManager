@@ -1,6 +1,6 @@
 ﻿namespace LightManager.Services.LightBulb;
 
-public enum LightBulbState
+public enum LightSourceState
 {
     On,
     Off

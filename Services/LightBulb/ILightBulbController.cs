@@ -2,12 +2,15 @@
 
 namespace LightManager.Services.LightBulb;
 
-public interface ILightBulbController
+public interface ILightSource
 {
-    LightBulbState? CurrentState { get; }
+    LightSourceState? CurrentState { get; }
 
-    Task SetState(LightBulbState state, CancellationToken token = default);
+    Task SetState(LightSourceState state, CancellationToken token = default);
+}
 
+public interface ILightBulbController: ILightSource
+{
     Task SetSettings(LightSettingsDto settings, CancellationToken token = default);
 }
 

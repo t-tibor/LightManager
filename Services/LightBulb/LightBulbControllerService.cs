@@ -9,6 +9,7 @@ using System.Text;
 namespace LightManager.Services.LightBulb;
 
 internal class LightBulbControllerService(
+    ILogger<LightBulbControllerService> logger,
     IOptions<LightBulbConfig> configOptions,
     IMqttConnector mqttConnector
     ) : ILightBulbController, IHostedService
@@ -16,10 +17,10 @@ internal class LightBulbControllerService(
     private readonly LightBulbConfig config = configOptions.Value;
     private IDisposable? statusSubscription;
     private object _lastStateLock = new object();
-    private LightBulbState? _lastState;
+    private LightSourceState? _lastState;
     private LightSettingsDto? currentSettings;
 
-    public LightBulbState? CurrentState
+    public LightSourceState? CurrentState
     {
         get
         {
@@ -38,9 +39,9 @@ internal class LightBulbControllerService(
         }
     }
     
-    public async Task SetState(LightBulbState state, CancellationToken token = default)
+    public async Task SetState(LightSourceState state, CancellationToken token = default)
     {
-        if (state == LightBulbState.On && currentSettings is not null)
+        if (state == LightSourceState.On && currentSettings is not null)
         {
             await SendCommand(builder =>
             {
@@ -60,7 +61,7 @@ internal class LightBulbControllerService(
 
     public async Task SetSettings(LightSettingsDto settings, CancellationToken token = default)
     {
-        if (CurrentState.HasValue && CurrentState.Value == LightBulbState.On)
+        if (CurrentState.HasValue && CurrentState.Value == LightSourceState.On)
         {
             await SendCommand(builder =>
             {
@@ -92,18 +93,21 @@ internal class LightBulbControllerService(
         statusSubscription = await mqttConnector.SubscribeAsync(
             builder => builder.WithTopicFilter(config.MqttTopicBase),
             messageRcvd =>
-            {
+            {        
                 var payload = Encoding.ASCII.GetString(messageRcvd.ApplicationMessage.PayloadSegment);
+
+                
+
                 var msg = JObject.Parse(payload);
                 var state = msg["state"]?.ToString() ?? string.Empty;
 
                 if (string.Compare(state, "on", ignoreCase: true) == 0)
                 {
-                    CurrentState = LightBulbState.On;
+                    CurrentState = LightSourceState.On;
                 }
                 else
                 {
-                    CurrentState = LightBulbState.Off;
+                    CurrentState = LightSourceState.Off;
                 }
 
                 return Task.CompletedTask;
@@ -144,12 +148,12 @@ public class LightBulbCommandBuilder
     }
 
 
-    public LightBulbCommandBuilder SetState(LightBulbState state, CancellationToken token = default)
+    public LightBulbCommandBuilder SetState(LightSourceState state, CancellationToken token = default)
     {
         cmd.Add("state", state switch
         {
-            LightBulbState.On => "ON",
-            LightBulbState.Off => "OFF",
+            LightSourceState.On => "ON",
+            LightSourceState.Off => "OFF",
             _ => throw new NotImplementedException()
         });
         return this;

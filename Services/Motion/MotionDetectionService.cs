@@ -26,11 +26,11 @@ namespace LightManager.Services.Motion
 
                     if (string.Compare(state, "true", ignoreCase: true) == 0)
                     {
-                        await lightBulbController.SetState(LightBulbState.On);
+                        await lightBulbController.SetState(LightSourceState.On);
                     }
                     else
                     {
-                        await lightBulbController.SetState(LightBulbState.Off);
+                        await lightBulbController.SetState(LightSourceState.Off);
                     }
                 }
             );
