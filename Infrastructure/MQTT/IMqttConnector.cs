@@ -2,7 +2,7 @@
 using MQTTnet.Client;
 
 
-namespace LightManager.Services.MQTT;
+namespace LightManager.Infrastructure.MQTT;
 
 public interface IMqttConnector
 {

@@ -1,4 +1,4 @@
-using LightManager.Services.Manager.Location;
+using LightManager.Infrastructure.Location;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace LightManager.Pages;

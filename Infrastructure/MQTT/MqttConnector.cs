@@ -3,7 +3,7 @@ using MQTTnet;
 using MQTTnet.Client;
 
 
-namespace LightManager.Services.MQTT;
+namespace LightManager.Infrastructure.MQTT;
 
 public class MqttConnector(IOptions<MqttConfig> configOptions) : IMqttConnector
 {

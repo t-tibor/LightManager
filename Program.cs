@@ -1,32 +1,31 @@
 using Quartz;
-using LightManager.Services.MQTT;
 using LightManager.Services.Manager;
 using LightManager.Services.LightBulb;
 using LightManager.Services.Manager.Location;
 using LightManager.Services.Motion;
+using LightManager.Infrastructure.MQTT;
+using App;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 
+// Instapp application
+InfrastructureInstaller.RegisterInfrastructure(builder.Services, builder.Configuration);
+DevicesInstaller.RegisterDevices(builder.Services, builder.Configuration);
+
+
 builder.Services.Configure<LightingTimetable>(builder.Configuration.GetRequiredSection(nameof(LightingTimetable)));
 builder.Services.AddSingleton<ILightingTimetableSource, ConfigBasedTimetableSource>();
 builder.Services.Configure<LocationServiceConfig>(builder.Configuration.GetRequiredSection(nameof(LocationServiceConfig)));
 builder.Services.AddSingleton<ILocationService, LocationService>();
 builder.Services.AddSingleton<ILightingManager, LightingManager>();
-builder.Services.Configure<MqttConfig>(builder.Configuration.GetRequiredSection(nameof(MqttConfig)));
-builder.Services.AddSingleton<IMqttConnector, MqttConnector>();
 
 builder.Services.AddSingleton<LightBulbControllerService>();
 builder.Services.AddSingleton<ILightBulbController>(svc => svc.GetRequiredService<LightBulbControllerService>());
 builder.Services.AddHostedService(svc => svc.GetRequiredService<LightBulbControllerService>());
 
-builder.Services.AddOptions<MotionDetectionConfig>()
-    .Bind(builder.Configuration.GetRequiredSection(nameof(MotionDetectionConfig)))
-    .ValidateDataAnnotations()
-    .ValidateOnStart();
-builder.Services.AddHostedService<MotionDetectionService>();
 
 builder.Services.AddQuartzHostedService(c => {
     c.AwaitApplicationStarted = true;

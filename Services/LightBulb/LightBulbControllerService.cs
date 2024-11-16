@@ -1,6 +1,5 @@
-﻿using LightManager.Services.Manager;
-using LightManager.Services.MQTT;
-using Microsoft.Extensions.Options;
+﻿using LightManager.Infrastructure.MQTT;
+using LightManager.Services.Manager;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Text;
@@ -10,11 +9,10 @@ namespace LightManager.Services.LightBulb;
 
 internal class LightBulbControllerService(
     ILogger<LightBulbControllerService> logger,
-    IOptions<LightBulbConfig> configOptions,
+    LightBulbConfig config,
     IMqttConnector mqttConnector
     ) : ILightBulbController, IHostedService
 {
-    private readonly LightBulbConfig config = configOptions.Value;
     private IDisposable? statusSubscription;
     private object _lastStateLock = new object();
     private LightSourceState? _lastState;
@@ -162,7 +160,7 @@ public class LightBulbCommandBuilder
     public override string ToString() => JsonConvert.SerializeObject(cmd);
 }
 
-internal class LightBulbConfig
+public class LightBulbConfig
 {
     public string MqttTopicBase { get; set; } = "zigbee2mqtt/Bulb1";
 }

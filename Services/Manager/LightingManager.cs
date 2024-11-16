@@ -1,5 +1,5 @@
-﻿using LightManager.Services.LightBulb;
-using LightManager.Services.Manager.Location;
+﻿using LightManager.Infrastructure.Location;
+using LightManager.Services.LightBulb;
 
 namespace LightManager.Services.Manager
 {
