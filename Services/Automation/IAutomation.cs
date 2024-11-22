@@ -1,5 +1,7 @@
 public interface IAutomation
 {
+    string Name {get;}
+    
     event EventHandler<AutomationState> StateChanged;
 
     AutomationState CurrentState {get;}

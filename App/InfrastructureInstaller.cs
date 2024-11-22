@@ -1,7 +1,8 @@
 using LightManager.Infrastructure.Location;
 using LightManager.Infrastructure.Time;
 using LightManager.Infrastructure.MQTT;
-using MQTTnet.Channel;
+
+namespace LightManager.App;
 
 public static class InfrastructureInstaller
 {

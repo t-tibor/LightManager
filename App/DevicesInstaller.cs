@@ -2,7 +2,7 @@ using LightManager.Infrastructure.MQTT;
 using LightManager.Services.LightBulb;
 using LightManager.Services.Motion;
 
-namespace App;
+namespace LightManager.App;
 
 public static class DevicesInstaller
 {
@@ -10,31 +10,32 @@ public static class DevicesInstaller
     {
         var devConf = config.Get<DeviceRegistry>() ?? throw new ApplicationException($"{nameof(DeviceRegistry)} section is missing from the config");
 
-        foreach(var item in devConf.MotionSensors)
-        {   
+        foreach (var item in devConf.MotionSensors)
+        {
             var sensorName = item.Key;
 
             services.AddMotionSensor(sensorName, item.Value);
         }
 
-        foreach(var item in devConf.LightBulbs)
+        foreach (var item in devConf.LightBulbs)
         {
             services.AddLightBulb(item.Key, item.Value);
         }
-    }    
+    }
 
     private static void AddMotionSensor(this IServiceCollection services, object? svcKey, MotionDetectorConfig config)
     {
         services.AddKeyedSingleton<MotionSensorMqtt>(
             svcKey,
             (svc, key) => new MotionSensorMqtt(
+                svc.GetRequiredService<ILogger<MotionSensorMqtt>>(),
                 config,
                 svc.GetRequiredService<IMqttConnector>()
             )
         );
 
         services.AddKeyedSingleton<IMotionSensor>(svcKey, (svc, key) => svc.GetRequiredKeyedService<MotionSensorMqtt>(key));
-        services.AddHostedService<MotionSensorMqtt>(svc => svc.GetRequiredKeyedService<MotionSensorMqtt>(svcKey));
+        services.AddHostedService(svc => svc.GetRequiredKeyedService<MotionSensorMqtt>(svcKey));
     }
 
     private static void AddLightBulb(this IServiceCollection services, object? svcKey, LightBulbConfig config)
@@ -57,5 +58,5 @@ public class DeviceRegistry
 {
     public Dictionary<string, MotionDetectorConfig> MotionSensors { get; set; } = [];
 
-    public Dictionary<string, LightBulbConfig> LightBulbs { get; set;} = [];
+    public Dictionary<string, LightBulbConfig> LightBulbs { get; set; } = [];
 }

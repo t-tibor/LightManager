@@ -78,6 +78,8 @@ internal class LightBulbControllerService(
         builder(cmdBuilder);
         var cmd = cmdBuilder.ToString();
 
+        logger.LogTrace("Sending light bulb command: {Command}.", cmd);
+
         await mqttConnector.Publish(
             b => b.WithTopic($"{config.MqttTopicBase}/set").WithPayload(cmd).Build(),
             token
@@ -88,15 +90,15 @@ internal class LightBulbControllerService(
     #region IHostedService
     public async Task StartAsync(CancellationToken cancellationToken)
     {
+        logger.LogInformation("Starting light bulb controller service for topic {topic}", config.MqttTopicBase);;
         statusSubscription = await mqttConnector.SubscribeAsync(
             builder => builder.WithTopicFilter(config.MqttTopicBase),
             messageRcvd =>
             {        
-                var payload = Encoding.ASCII.GetString(messageRcvd.ApplicationMessage.PayloadSegment);
-
-                
-
+                var payload = Encoding.ASCII.GetString(messageRcvd.ApplicationMessage.PayloadSegment);                
                 var msg = JObject.Parse(payload);
+                logger.LogTrace("Received light bulb status: {payload}", payload);
+                
                 var state = msg["state"]?.ToString() ?? string.Empty;
 
                 if (string.Compare(state, "on", ignoreCase: true) == 0)
@@ -122,6 +124,8 @@ internal class LightBulbControllerService(
 
     public Task StopAsync(CancellationToken cancellationToken)
     {
+        logger.LogInformation("Stopping light bulb controller service for topic {topic}", config.MqttTopicBase);
+
         statusSubscription?.Dispose();
         statusSubscription = null;
         return Task.CompletedTask;

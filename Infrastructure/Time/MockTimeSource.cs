@@ -2,5 +2,5 @@ namespace LightManager.Infrastructure.Time;
 
 public class MockTimeSource: ITimeSource
 {
-    public DateTimeOffset { get; set;} = DateTimeOffset.Now;
+    public DateTimeOffset Now { get; set; } = DateTimeOffset.Now;
 }

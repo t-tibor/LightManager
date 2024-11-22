@@ -5,7 +5,6 @@ namespace LightManager.Services.Manager
 {
 
     public class LightingManager(
-        ILogger<LightingManager> logger,
         ILocationService locationService,
         ILightingTimetableSource timetableSource
         ) : ILightingManager

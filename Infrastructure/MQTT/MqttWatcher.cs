@@ -18,15 +18,14 @@ public class MqttWatcher<T>(
     {
         subscription = await mqttConnector.SubscribeAsync(subscriptionConfig => subscriptionConfig
             .WithTopicFilter(topic),
-            async msg =>
-            {
+            msg => Task.Run(() => {
                 var payload = Encoding.ASCII.GetString(msg.ApplicationMessage.PayloadSegment);
 
                 var eval = evaluation(payload);
 
                 // publish the new evaluation
                 subject.OnNext(eval);
-            }
+            })
         );
     }
 

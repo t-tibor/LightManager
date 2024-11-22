@@ -6,6 +6,7 @@ namespace LightManager.Services.Motion
 {
 
     public class MotionSensorMqtt(
+        ILogger<MotionSensorMqtt> logger,
         MotionDetectorConfig config,
         IMqttConnector mqttConnector
             ) : IMotionSensor, IHostedService
@@ -23,11 +24,13 @@ namespace LightManager.Services.Motion
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
+            logger.LogInformation("Starting motion sensor MQTT watcher for topic {topic}", config.MotionDetectorTopic);
             await mqttWatcher.StartAsync();
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)
         {
+            logger.LogInformation("Stopping motion sensor MQTT watcher for topic {topic}", config.MotionDetectorTopic);
             await mqttWatcher.StopAsync();            
         }
     }
