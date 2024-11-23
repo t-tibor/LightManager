@@ -30,6 +30,10 @@ public static class AutomationInstaller
                 return factory.CreateAutomation(kv.Key, kv.Value);
             });
         }
+
+
+        // Add the automation service
+    
     }
 }
 

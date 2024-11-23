@@ -8,22 +8,12 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 
+
+
 // Instapp application
 InfrastructureInstaller.RegisterInfrastructure(builder.Services, builder.Configuration);
 DevicesInstaller.RegisterDevices(builder.Services, builder.Configuration);
 AutomationInstaller.RegisterAutomations(builder.Services, builder.Configuration);
-
-
-builder.Services.Configure<LightingTimetable>(builder.Configuration.GetRequiredSection(nameof(LightingTimetable)));
-builder.Services.AddSingleton<ILightingTimetableSource, ConfigBasedTimetableSource>();
-builder.Services.Configure<LocationServiceConfig>(builder.Configuration.GetRequiredSection(nameof(LocationServiceConfig)));
-builder.Services.AddSingleton<ILocationService, LocationService>();
-builder.Services.AddSingleton<ILightingManager, LightingManager>();
-
-builder.Services.AddSingleton<LightBulbControllerService>();
-builder.Services.AddSingleton<ILightBulbController>(svc => svc.GetRequiredService<LightBulbControllerService>());
-builder.Services.AddHostedService(svc => svc.GetRequiredService<LightBulbControllerService>());
-
 
 var app = builder.Build();
 
