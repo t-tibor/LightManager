@@ -1,14 +1,9 @@
-using LightManager.Services.Manager;
-using LightManager.Services.LightBulb;
 using LightManager.App;
-using LightManager.Infrastructure.Location;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
-
-
 
 // Instapp application
 InfrastructureInstaller.RegisterInfrastructure(builder.Services, builder.Configuration);

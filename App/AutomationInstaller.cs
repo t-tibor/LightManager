@@ -31,9 +31,8 @@ public static class AutomationInstaller
             });
         }
 
-
         // Add the automation service
-    
+        services.AddHostedService<AutomationService>();    
     }
 }
 

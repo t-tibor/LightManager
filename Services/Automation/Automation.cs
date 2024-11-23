@@ -11,7 +11,7 @@ public class Automation<T>(
 {
     public event EventHandler<AutomationState>? StateChanged;
 
-    private AutomationState _currentState;
+    private AutomationState _currentState = AutomationState.Stopped;
     public AutomationState CurrentState {
         get =>_currentState;
         set {
@@ -28,12 +28,16 @@ public class Automation<T>(
 
     public void Start()
     {
-        if(this.CurrentState != AutomationState.Running) return;        
+        if(this.CurrentState == AutomationState.Running) return;        
 
         subscription = trigger.Timestamp()
-        .Do(t => logger.LogDebug("Automation {AutomationName} triggered. Value: {AutomationValue}", Name, t))
+        .Do(
+            t => logger.LogDebug("Automation {AutomationName} triggered. Value: {AutomationValue}", Name, t)
+        )
         .Where(predicate)
-        .Do(t => logger.LogDebug("Automation {AutomationName} predicate matched. Value: {AutomationValue}", Name, t))
+        .Do(
+            t => logger.LogDebug("Automation {AutomationName} predicate matched. Value: {AutomationValue}", Name, t)
+        )
         .Subscribe( arg => {
             logger.LogDebug("Automation {AutomationName} action triggered. Value: {AutomationValue}", Name, arg);
             action(arg);
@@ -47,7 +51,7 @@ public class Automation<T>(
 
     public void Stop()
     {
-        if(this.CurrentState == AutomationState.Running) return;
+        if(this.CurrentState != AutomationState.Running) return;
 
         subscription?.Dispose();
         subscription = null;

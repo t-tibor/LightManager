@@ -8,7 +8,7 @@ public static class DevicesInstaller
 {
     public static void RegisterDevices(IServiceCollection services, IConfigurationRoot config)
     {
-        var devConf = config.Get<DeviceRegistry>() ?? throw new ApplicationException($"{nameof(DeviceRegistry)} section is missing from the config");
+        var devConf = config.GetRequiredSection(nameof(DeviceRegistry)).Get<DeviceRegistry>() ?? throw new ApplicationException($"{nameof(DeviceRegistry)} section is missing from the config");
 
         foreach (var item in devConf.MotionSensors)
         {
