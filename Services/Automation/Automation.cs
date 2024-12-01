@@ -1,20 +1,24 @@
 using System.Reactive;
 using System.Reactive.Linq;
 
+namespace LightManager.Services.Automation;
+
 public class Automation<T>(
     ILogger<Automation<T>> logger,
     string name,
     IObservable<T> trigger,
     Func<Timestamped<T>, bool> predicate,
     Action<Timestamped<T>> action
-        ): IAutomation
+        ) : IAutomation
 {
     public event EventHandler<AutomationState>? StateChanged;
 
     private AutomationState _currentState = AutomationState.Stopped;
-    public AutomationState CurrentState {
-        get =>_currentState;
-        set {
+    public AutomationState CurrentState
+    {
+        get => _currentState;
+        set
+        {
             _currentState = value;
             StateChanged?.Invoke(this, value);
         }
@@ -28,7 +32,7 @@ public class Automation<T>(
 
     public void Start()
     {
-        if(this.CurrentState == AutomationState.Running) return;        
+        if (CurrentState == AutomationState.Running) return;
 
         subscription = trigger.Timestamp()
         .Do(
@@ -38,25 +42,26 @@ public class Automation<T>(
         .Do(
             t => logger.LogDebug("Automation {AutomationName} predicate matched. Value: {AutomationValue}", Name, t)
         )
-        .Subscribe( arg => {
+        .Subscribe(arg =>
+        {
             logger.LogDebug("Automation {AutomationName} action triggered. Value: {AutomationValue}", Name, arg);
             action(arg);
             Triggered?.Invoke(this, EventArgs.Empty);
         });
-        
-        this.CurrentState = AutomationState.Running;
+
+        CurrentState = AutomationState.Running;
 
         logger.LogDebug("Automation {AutomationName} started.", Name);
     }
 
     public void Stop()
     {
-        if(this.CurrentState != AutomationState.Running) return;
+        if (CurrentState != AutomationState.Running) return;
 
         subscription?.Dispose();
         subscription = null;
 
-        this.CurrentState = AutomationState.Stopped; 
+        CurrentState = AutomationState.Stopped;
 
         logger.LogDebug("Automation {AutomationName} stopped.", Name);
     }

@@ -32,7 +32,9 @@ public static class AutomationInstaller
         }
 
         // Add the automation service
-        services.AddHostedService<AutomationService>();    
+        services.AddSingleton<AutomationService>();
+        services.AddHostedService(svc => svc.GetRequiredService<AutomationService>());    
+        services.AddSingleton<IAutomationRepository>(svc => svc.GetRequiredService<AutomationService>());
     }
 }
 
