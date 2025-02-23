@@ -4,7 +4,6 @@ public interface IAutomation
 {
 	string Name { get; }
 
-	event EventHandler Triggered;
 
 	event EventHandler<AutomationState> StateChanged;
 
@@ -13,4 +12,7 @@ public interface IAutomation
 	void Start();
 
 	void Stop();
+
+
+	event EventHandler Triggered;
 }

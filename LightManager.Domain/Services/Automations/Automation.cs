@@ -1,67 +1,89 @@
-using System.Reactive;
-using System.Reactive.Linq;
-
 namespace LightManager.Domain.Services.Automations;
 
-public class Automation<T>(
-	string name,
-	IObservable<T> trigger,
-	Func<Timestamped<T>, bool> predicate,
-	Action<Timestamped<T>> action
-		) : IAutomation
+public class Lock
 {
+	private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+
+	public IDisposable WaitFor()
+	{
+		_semaphore.Wait();
+		return new LockReleaser(_semaphore);
+	}
+
+	private sealed class LockReleaser : IDisposable
+	{
+		private readonly SemaphoreSlim _semaphore;
+		private bool disposed;
+
+		public LockReleaser(SemaphoreSlim semaphore)
+		{
+			_semaphore = semaphore;
+		}
+
+		public void Dispose()
+		{
+			if(!disposed)
+			{
+				_semaphore.Release();
+				disposed = true;
+			}
+		}
+	}
+}
+
+public abstract class Automation(string name) : IAutomation
+{
+	private AutomationState _currentState = AutomationState.Stopped;
+	private Lock _lock = new Lock();
+
+
+	public string Name => name;
+
 	public event EventHandler<AutomationState>? StateChanged;
 
-	private AutomationState _currentState = AutomationState.Stopped;
 	public AutomationState CurrentState
 	{
 		get => _currentState;
-		set
+		private set
 		{
 			_currentState = value;
 			StateChanged?.Invoke(this, value);
 		}
 	}
 
-	public string Name => name;
-
-	public event EventHandler? Triggered;
-
-	private IDisposable? subscription;
-
 	public void Start()
 	{
-		if (CurrentState == AutomationState.Running) return;
+		using var _ = _lock.WaitFor();
 
-		subscription = trigger.Timestamp()
-		/*.Do(
-			t => logger.LogDebug("Automation {AutomationName} triggered. Value: {AutomationValue}", Name, t)
-		)*/
-		.Where(predicate)
-		/*.Do(
-			t => logger.LogDebug("Automation {AutomationName} predicate matched. Value: {AutomationValue}", Name, t)
-		)*/
-		.Subscribe(arg =>
+		if (CurrentState == AutomationState.Stopped)
 		{
-			//logger.LogDebug("Automation {AutomationName} action triggered. Value: {AutomationValue}", Name, arg);
-			action(arg);
-			Triggered?.Invoke(this, EventArgs.Empty);
-		});
+			StartInternal();
 
-		CurrentState = AutomationState.Running;
-
-		//logger.LogDebug("Automation {AutomationName} started.", Name);
+			CurrentState = AutomationState.Running;
+		}
 	}
 
 	public void Stop()
 	{
-		if (CurrentState != AutomationState.Running) return;
+		using var _ = _lock.WaitFor();
 
-		subscription?.Dispose();
-		subscription = null;
-
-		CurrentState = AutomationState.Stopped;
-
-		//logger.LogDebug("Automation {AutomationName} stopped.", Name);
+		if(CurrentState == AutomationState.Running)
+		{
+			StopInternal();
+			CurrentState = AutomationState.Stopped;
+		}
 	}
+
+
+	public event EventHandler? Triggered;
+
+
+	protected void ReportTriggering()
+	{
+		Triggered?.Invoke(this, EventArgs.Empty);
+	}
+
+	protected abstract void StartInternal();
+
+	protected abstract void StopInternal();
 }

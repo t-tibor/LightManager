@@ -1,7 +1,8 @@
 using System.Collections.Immutable;
+using LightManager.Domain.Services.Automations;
 using Microsoft.Extensions.Hosting;
 
-namespace LightManager.Core.Services.Automation;
+namespace LightManager.Application.Services.Automation;
 
 
 public class AutomationRepository(IEnumerable<IAutomation> automations) : IHostedService, IAutomationRepository

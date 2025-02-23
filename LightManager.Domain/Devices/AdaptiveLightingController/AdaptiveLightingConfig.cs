@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace LightManager.Domain.Services.AdaptiveLighting
+namespace LightManager.Domain.Devices.AdaptiveLightingController
 {
 	public class AdaptiveLightingConfig
 	{

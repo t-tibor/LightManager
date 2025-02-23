@@ -1,5 +1,6 @@
 using LightManager.Persistence;
 using LightManager.Persistence.MigrationService;
+using LightManager.ServiceDefaults;
 using Microsoft.AspNetCore.Routing.Internal;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;

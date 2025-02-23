@@ -1,6 +1,6 @@
-﻿namespace LightManager.Domain.Services.AdaptiveLighting;
+﻿namespace LightManager.Domain.Devices.AdaptiveLightingController;
 
-public interface IAdaptiveLightingStrategy
+public interface IAdaptiveLightingController
 {
 	bool IsLightingEnabled { get; }
 

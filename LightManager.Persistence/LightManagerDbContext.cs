@@ -1,7 +1,5 @@
 ﻿using LightManager.Domain.Devices.Motion;
-using LightManager.Domain.Services.AdaptiveLighting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace LightManager.Persistence
 {

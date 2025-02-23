@@ -4,7 +4,6 @@ using Newtonsoft.Json.Linq;
 
 namespace LightManager.Domain.Devices.Motion
 {
-
 	public class MqttMotionSensorClient(
 		MqttMotionSensorConfig config,
 		IMqttWatcherFactory<bool> mqttConnector

@@ -14,4 +14,8 @@
     <PackageReference Include="System.Reactive" Version="6.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\LightManager.Domain\LightManager.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

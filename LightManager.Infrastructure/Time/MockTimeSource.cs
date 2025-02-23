@@ -1,4 +1,4 @@
-using LightManager.Core.Contracts;
+using LightManager.Domain.Contracts;
 
 namespace LightManager.Infrastructure.Time;
 

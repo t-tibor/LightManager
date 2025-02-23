@@ -1,4 +1,4 @@
-namespace LightManager.Core.Contracts;
+namespace LightManager.Domain.Contracts;
 
 public interface ITimeSource
 {

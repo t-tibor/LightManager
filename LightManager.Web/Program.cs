@@ -1,4 +1,5 @@
 using LightManager.Persistence;
+using LightManager.ServiceDefaults;
 
 namespace LightManager.Web
 {

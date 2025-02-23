@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightManager.Core", "LightManager.Core\LightManager.Core.csproj", "{75AE13E6-20E8-409B-ACA9-4E92A0947D55}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightManager.Application", "LightManager.Core\LightManager.Application.csproj", "{75AE13E6-20E8-409B-ACA9-4E92A0947D55}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightManager.Infrastructure", "LightManager.Infrastructure\LightManager.Infrastructure.csproj", "{97DD60EA-8DB7-40F0-8003-97FA18EFD75D}"
 EndProject

@@ -1,5 +1,5 @@
 ﻿using CoordinateSharp;
-using LightManager.Core.Contracts;
+using LightManager.Domain.Contracts;
 using Microsoft.Extensions.Options;
 
 namespace LightManager.Infrastructure.Location;

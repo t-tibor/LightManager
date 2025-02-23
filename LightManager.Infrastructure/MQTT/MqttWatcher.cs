@@ -1,6 +1,6 @@
 using System.Reactive.Subjects;
 using System.Text;
-using LightManager.Core.Contracts;
+using LightManager.Domain.Contracts;
 
 namespace LightManager.Infrastructure.MQTT;
 

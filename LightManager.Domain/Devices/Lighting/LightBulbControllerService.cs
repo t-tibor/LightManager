@@ -6,13 +6,13 @@ using Newtonsoft.Json.Linq;
 using System.Text;
 
 
-namespace LightManager.Core.Services.LightBulb;
+namespace LightManager.Domain.Devices.Lighting;
 
 internal class LightBulbControllerService(
 	ILogger<LightBulbControllerService> logger,
 	LightBulbConfig config,
 	IMqttConnector mqttConnector
-	) : ILightBulbController, IHostedService
+	) : I, IHostedService
 {
 	private IDisposable? statusSubscription;
 	private object _lastStateLock = new object();

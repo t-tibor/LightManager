@@ -1,5 +1,4 @@
-﻿using LightManager.Core.Contracts;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using MQTTnet;
 using MQTTnet.Client;
 
