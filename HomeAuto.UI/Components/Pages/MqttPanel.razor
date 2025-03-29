@@ -1,0 +1,160 @@
+﻿@page "/Mqtt"
+@rendermode InteractiveServer
+@using LightManager.Infrastructure.MQTT
+@using System.Text
+@using Microsoft.AspNetCore.Components.QuickGrid
+@inject IMqttConnector mqttConnector
+@implements IDisposable
+
+<h3>Mqtt client</h3>
+
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="messageToSend" OnSubmit="SendMqttMessage" Enhance>
+            <div class="mb-3">
+                <label for="topic" class="form-label">Topic:</label>
+                <InputText id="topic" @bind-Value="messageToSend.Topic" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label for="payload" class="form-label">Payload:</label>
+                <InputText id="payload" @bind-Value="messageToSend.Payload" class="form-control" />
+            </div>
+            <button type="submit" class="btn btn-primary">Send</button>
+        </EditForm>
+    </div>
+</div>
+
+<br />
+
+<h3>MQTT watcher</h3>
+
+<div class="row">
+    <div class="md-4">
+        <div>
+            <label for="filter" class="form-label">Topic filter:</label>
+            <input id="filter" class="form-control" type="text" @bind="topicFilterEdit"/>
+            <button class="btn btn-primary" @onclick="UpdateSubscription">Update</button>
+        </div>
+    </div>
+</div>
+
+<br/>
+
+<div class="row row-cols-3">
+    <label class="form-label col-sm-2">Current topic filter</label>
+    <button class="btn btn-close col-sm-2" @onclick="ClearSubscription"></button>
+    <label class="col-sm-2">@topicFilter</label>
+</div>
+
+
+<QuickGrid Class="grid" Items="mqttMessages.AsQueryable()">
+    <PropertyColumn Title="Topic" Property="m => m.Topic" />
+    <PropertyColumn Title="Payload" Property="m => m.Payload" />
+    <PropertyColumn Title="Date" Property="m => m.Timestamp" />
+</QuickGrid>
+
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        mqttSubscription = await Subscribe("#");
+        topicFilter = "#";
+    }
+
+    private readonly MqttMessageDto messageToSend = new();
+
+    private async Task SendMqttMessage()
+    {
+        try
+        {
+            await mqttConnector.Publish(msg => msg.WithTopic(messageToSend.Topic).WithPayload(messageToSend.Payload).Build());
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+
+    private readonly List<MqttMessageDto> mqttMessages = [];
+
+    private string? topicFilterEdit = "#";
+    private string? topicFilter;
+    private IDisposable? mqttSubscription;
+
+    private async Task UpdateSubscription()
+    {
+        if (topicFilterEdit is null) return;
+
+        mqttSubscription?.Dispose();
+        mqttSubscription = null;
+        mqttSubscription = await Subscribe(topicFilterEdit);
+        topicFilter = topicFilterEdit;
+    }
+
+    private void ClearSubscription()
+    {
+        mqttSubscription?.Dispose();
+        mqttSubscription = null;
+        topicFilter = string.Empty;
+    }
+
+    private async Task<IDisposable> Subscribe(string topic)
+    {
+        return await mqttConnector.SubscribeAsync(
+            builder => builder.WithTopicFilter(topic).Build(),
+            msg =>
+            {
+                try
+                {
+                    var payload = Encoding.ASCII.GetString(msg.ApplicationMessage.PayloadSegment);
+                    mqttMessages.Insert(0, new MqttMessageDto(msg.ApplicationMessage.Topic, payload));
+                    var msgCount = mqttMessages.Count;
+                    if(msgCount > 10)
+                    {
+                        mqttMessages.RemoveRange(10, msgCount - 10);
+                    }
+                    InvokeAsync(StateHasChanged);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+
+                return Task.CompletedTask;
+            });
+    }
+
+    public void Dispose()
+    {
+        mqttSubscription?.Dispose();
+        mqttSubscription = null;
+    }
+
+
+
+    public class MqttMessageDto
+    {
+
+        public string Topic { get; set; }
+        public string Payload { get; set; }
+        public DateTime Timestamp { get; set; }
+
+        public MqttMessageDto(string topic, string payload)
+        {
+            Topic = topic;
+            Payload = payload;
+            Timestamp = DateTime.Now;
+        }
+
+        public MqttMessageDto()
+        {
+            Topic = string.Empty;
+            Payload = string.Empty;
+            Timestamp = DateTime.Now;
+        }
+    }
+
+
+}
+

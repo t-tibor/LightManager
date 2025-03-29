@@ -14,8 +14,15 @@ var migrationService = builder.AddProject<Projects.LightManager_Persistence_Migr
 	.WaitFor(postgres)
 	.WithReference(postgresdb);
 
+
+var mqtt = builder.AddContainer("mqtt", "eclipse-mosquitto")
+	.WithEndpoint(8082, 1883)
+	.WithBindMount("./Config/mosquitto.conf", "/mosquitto/config/mosquitto.conf");
+
 builder.AddProject<Projects.LightManager_Web>("lightmanager-web")
 	.WithReference(postgresdb)
 	.WaitForCompletion(migrationService);
+
+builder.AddProject<Projects.HomeAuto_UI>("homeauto-ui");
 
 await builder.Build().RunAsync();

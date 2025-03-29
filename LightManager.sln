@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightManager.Application", "LightManager.Core\LightManager.Application.csproj", "{75AE13E6-20E8-409B-ACA9-4E92A0947D55}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightManager.Application", "LightManager.Application\LightManager.Application.csproj", "{75AE13E6-20E8-409B-ACA9-4E92A0947D55}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightManager.Infrastructure", "LightManager.Infrastructure\LightManager.Infrastructure.csproj", "{97DD60EA-8DB7-40F0-8003-97FA18EFD75D}"
 EndProject
@@ -18,6 +18,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightManager.ServiceDefaults", "LightManager.ServiceDefaults\LightManager.ServiceDefaults.csproj", "{C3BD691E-449C-42B6-837E-60EAF2ADEE01}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightManager.Persistence.MigrationService", "LightManager.Persistence.MigrationService\LightManager.Persistence.MigrationService.csproj", "{44370628-E29E-4A07-AC1B-D624348A437B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeAuto.UI", "HomeAuto.UI\HomeAuto.UI.csproj", "{DF7C2A48-EED8-40E2-A155-F7BEF45B62BB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +59,10 @@ Global
 		{44370628-E29E-4A07-AC1B-D624348A437B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{44370628-E29E-4A07-AC1B-D624348A437B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{44370628-E29E-4A07-AC1B-D624348A437B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF7C2A48-EED8-40E2-A155-F7BEF45B62BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF7C2A48-EED8-40E2-A155-F7BEF45B62BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF7C2A48-EED8-40E2-A155-F7BEF45B62BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF7C2A48-EED8-40E2-A155-F7BEF45B62BB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
