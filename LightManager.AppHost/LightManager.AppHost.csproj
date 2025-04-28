@@ -22,7 +22,6 @@
     <ProjectReference Include="..\HomeAuto.UI\HomeAuto.UI.csproj" />
     <ProjectReference Include="..\LightManager.Persistence.MigrationService\LightManager.Persistence.MigrationService.csproj" />
     <ProjectReference Include="..\LightManager.Persistence\LightManager.Persistence.csproj" />
-    <ProjectReference Include="..\LightManager.Web\LightManager.Web.csproj" />
   </ItemGroup>
 
   <ItemGroup>

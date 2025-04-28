@@ -11,8 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightManager.Domain", "Ligh
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightManager.Persistence", "LightManager.Persistence\LightManager.Persistence.csproj", "{BFC14ABF-4630-40E5-8B43-CB7F0487C65A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightManager.Web", "LightManager.Web\LightManager.Web.csproj", "{5669B6FC-4DC4-447B-A7AB-3F60DF36F6D7}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightManager.AppHost", "LightManager.AppHost\LightManager.AppHost.csproj", "{D12FB69F-4872-4DB1-99C8-051E120DD193}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightManager.ServiceDefaults", "LightManager.ServiceDefaults\LightManager.ServiceDefaults.csproj", "{C3BD691E-449C-42B6-837E-60EAF2ADEE01}"
@@ -45,10 +43,6 @@ Global
 		{BFC14ABF-4630-40E5-8B43-CB7F0487C65A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BFC14ABF-4630-40E5-8B43-CB7F0487C65A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BFC14ABF-4630-40E5-8B43-CB7F0487C65A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5669B6FC-4DC4-447B-A7AB-3F60DF36F6D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5669B6FC-4DC4-447B-A7AB-3F60DF36F6D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5669B6FC-4DC4-447B-A7AB-3F60DF36F6D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5669B6FC-4DC4-447B-A7AB-3F60DF36F6D7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D12FB69F-4872-4DB1-99C8-051E120DD193}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D12FB69F-4872-4DB1-99C8-051E120DD193}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D12FB69F-4872-4DB1-99C8-051E120DD193}.Release|Any CPU.ActiveCfg = Release|Any CPU
