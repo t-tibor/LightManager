@@ -1,0 +1,30 @@
+﻿@page
+@model LightManager.PanelUi.Pages.KitchenModel
+
+@{
+    ViewData["Title"] = "Konyha";
+}
+
+<div class="d-flex justify-content-center mt-4">
+    <div class="card m-2" style="width: 18rem;">
+        <div class="card-body text-center">
+            <h5 class="card-title">Ki</h5>
+            <form method="post">  
+               <input type="hidden" name="mode" value="off" />
+               <button type="submit" class="btn btn-dark">Off</button>  
+            </form>
+        </div>
+    </div>
+
+    <div class="card m-2" style="width: 18rem;">
+        <div class="card-body text-center">
+            <h5 class="card-title">Be</h5>
+            <form method="post">
+                <input type="hidden" name="mode" value="on" />
+                <button type="submit" class="btn btn-light">On</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+

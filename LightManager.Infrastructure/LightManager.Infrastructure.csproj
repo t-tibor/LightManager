@@ -8,12 +8,13 @@
 
   <ItemGroup>
     <PackageReference Include="CoordinateSharp" Version="3.1.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.4" />
     <PackageReference Include="MQTTnet" Version="4.3.7.1207" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LightManager.Application\LightManager.Application.csproj" />
+    <ProjectReference Include="..\LightManager.Domain\LightManager.Domain.csproj" />
   </ItemGroup>
 
 </Project>
