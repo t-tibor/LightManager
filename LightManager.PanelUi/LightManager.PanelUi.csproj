@@ -4,6 +4,9 @@
 		<TargetFramework>net9.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<ContainerRepository>LightManager</ContainerRepository>
+		<ContainerImageTag>0.1</ContainerImageTag>
+		<ContainerFamily>alpine</ContainerFamily>
 	</PropertyGroup>
 
   <ItemGroup>
