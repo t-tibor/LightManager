@@ -1,6 +1,7 @@
 using LightManager.Infrastructure.MQTT;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Newtonsoft.Json.Linq;
 
 namespace LightManager.PanelUi.Pages;
 
@@ -29,63 +30,14 @@ public class IndexModel : PageModel
 
 		switch (mode)
 		{
-			case "on":		
-				await _mqttConnector.Publish(x => x
-					.WithTopic("zigbee2mqtt/LedController/set")
-					.WithPayload("{\"state\": \"ON\", \"brightness\": 255}")
-					.Build()
-				);
-
-				await _mqttConnector.Publish(x => x
-					.WithTopic("zigbee2mqtt/KitchenLedLightSwitch/set")
-					.WithPayload("{ \"state\": \"ON\"}")
-					.Build()
-				);
-
-				await Task.Delay(2000);
-
-				await _mqttConnector.Publish(x => x
-					.WithTopic("zigbee2mqtt/LedController/set")
-					.WithPayload("{\"state\": \"ON\", \"brightness\": 255}")
-					.Build()
-				);
-
+			case "on":
+				await TurnOn(255);
 				break;
 			case "mild":
-				await _mqttConnector.Publish(x => x
-					.WithTopic("zigbee2mqtt/LedController/set")
-					.WithPayload("{\"state\": \"ON\", \"brightness\": 26}")
-					.Build()
-				);
-
-				await _mqttConnector.Publish(x => x
-					.WithTopic("zigbee2mqtt/KitchenLedLightSwitch/set")
-					.WithPayload("{ \"state\": \"ON\"}")
-					.Build()
-				);
-
-				await Task.Delay(2000);
-
-				await _mqttConnector.Publish(x => x
-					.WithTopic("zigbee2mqtt/LedController/set")
-					.WithPayload("{\"state\": \"ON\", \"brightness\": 26}")
-					.Build()
-				);			
+				await TurnOn(26);
 				break;
 			case "off":
-				await _mqttConnector.Publish(x => x
-					.WithTopic("zigbee2mqtt/LedController/set")
-					.WithPayload("{\"state\": \"OFF\", \"brightness\": 0}")
-					.Build()
-				);
-
-				await Task.Delay(2000);
-
-				await _mqttConnector.Publish(x => x
-					.WithTopic("zigbee2mqtt/KitchenLedLightSwitch/set")
-					.WithPayload("{ \"state\": \"OFF\"}")
-					.Build()
-				);
+				await TurnOff();
 				break;
 			default:
 				return NotFound("Invalid mode");
@@ -94,19 +46,84 @@ public class IndexModel : PageModel
 		return Page();
 	}
 
-	private async Task TurnOn()
+	private async Task TurnOn(ushort targetBrightness)
 	{
-		// subscribe to the led controller topic
-
-		// send out a brightness update command
 
 		// switch on the led power supply
+		await _mqttConnector.Publish(x => x
+			.WithTopic("zigbee2mqtt/KitchenLedLightSwitch/set")
+			.WithPayload("{ \"state\": \"ON\"}")
+			.Build()
+		);
 
-		// wait for the led controller status update with a timeout
+		using var responseCts = new CancellationTokenSource();
+		// subscribe to the led controller topic
+		using var subs = await _mqttConnector.SubscribeAsync(
+			conf => conf.WithTopicFilter("zigbee2mqtt/LedController"),
+			rcvEvent =>
+			{
+				// check the incoming message, and cancel the timeout if the brightness is the one we want
+				var raw = rcvEvent.ApplicationMessage;
+				var msg = System.Text.Encoding.UTF8.GetString(raw.PayloadSegment);
+				// deserialize the message string into a JObject
+				if (msg == null)
+				{
+					return Task.CompletedTask;
+				}
+				var jmsg = JObject.Parse(msg);
+				if (jmsg.TryGetValue("brightness", out var brightnessStr) &&
+					int.TryParse(brightnessStr.Value<string>(), out var brightness) && 
+					brightness == targetBrightness)
+				{
+					responseCts.Cancel();
+				}
 
-		// if timeouted or the current brightness is not the required one, then 
+				return Task.CompletedTask;
+			}
+		);
 
+		using var timeoutCts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+		using var cts = CancellationTokenSource.CreateLinkedTokenSource(responseCts.Token, timeoutCts.Token);
 
+		// periodically send out a OFF command to the led controller until we get a response or the timeout is reached
+		try
+		{
+			while (!cts.Token.IsCancellationRequested)
+			{
+				await _mqttConnector.Publish(x => x
+					.WithTopic("zigbee2mqtt/LedController/set")
+					.WithPayload($"{{\"state\": \"ON\", \"brightness\": {targetBrightness}}}")
+					.Build()
+				);
+
+				await Task.Delay(300, cts.Token);
+			}
+		}
+		catch (TaskCanceledException)
+		{
+			// timeout or brightness reached
+		}
+		finally
+		{
+			// unsubscribe from the led controller topic
+			subs.Dispose();
+		}
 	}
 
+	public async Task TurnOff()
+	{
+		await _mqttConnector.Publish(x => x
+			.WithTopic("zigbee2mqtt/LedController/set")
+			.WithPayload("{\"state\": \"OFF\", \"brightness\": 0}")
+			.Build()
+		);
+
+		await Task.Delay(2000);
+
+		await _mqttConnector.Publish(x => x
+			.WithTopic("zigbee2mqtt/KitchenLedLightSwitch/set")
+			.WithPayload("{ \"state\": \"OFF\"}")
+			.Build()
+		);
+	}
 }
