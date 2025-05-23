@@ -46,7 +46,7 @@ jobs:
             --platform linux/arm64/v8 \
             -t t-tibor94/light-manager:arm64-latest \
             --load \
-            -f ./LightManager.PanelUiDockerfile \
+            -f ./LightManager.PanelUi/Dockerfile \
             .
             
 
