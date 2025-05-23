@@ -44,6 +44,9 @@ jobs:
         run: |
           docker buildx build \
             --platform linux/arm64/v8 \
-            -t your-image-name:arm64-latest \
+            -t t-tibor94/light-manager:arm64-latest \
             --load \
+            -f ./LightManager.PanelUiDockerfile \
             .
+            
+
